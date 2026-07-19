@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+    <script>
+    var vConsole = new VConsole();
+    </script> -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#c0c0c0">
+    <link rel="apple-touch-icon" href="./resource/icon-192.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FacePhys Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <style>
+        :root {
+            --bg-gradient:
+                radial-gradient(circle at 12% 12%, rgba(255, 255, 255, 0.85), transparent 32%),
+                radial-gradient(circle at 88% 10%, rgba(176, 147, 255, 0.25), transparent 28%),
+                radial-gradient(circle at 20% 88%, rgba(109, 138, 229, 0.14), transparent 28%),
+                linear-gradient(160deg, #efeaf8 0%, #f7f4fb 42%, #f3f5fb 100%);
+            --card-bg: rgba(255, 255, 255, 0.58);
+            --card-bg-strong: rgba(255, 255, 255, 0.78);
+            --card-border: rgba(255, 255, 255, 0.72);
+            --card-shadow: 0 18px 50px rgba(83, 73, 125, 0.10);
+            --card-shadow-strong: 0 22px 60px rgba(83, 73, 125, 0.14);
+            --text-dark: #2a2833;
+            --text-light: #6f6a81;
+            --accent-purple: #835cf2;
+            --accent-blue: #6d8ae5;
+            --accent-mint: #4db7a3;
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 14px;
+            --glass-blur: blur(18px);
+        }
+
+        html {
+            background: var(--bg-gradient);
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            font-family: 'Outfit', sans-serif; 
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center; 
+            padding: 96px 24px 128px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            overflow-y: auto; 
+            user-select: none; 
+            -webkit-user-select: none;
+        }
+
+        /* Glassmorphism utility classes */
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+        }
+
+        #retro-nav {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1200px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.74);
+            border-radius: 999px;
+            box-shadow: 0 10px 34px rgba(83, 73, 125, 0.10);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px 0 18px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.92);
+        }
+
+        .nav-group-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 100%;
+        }
+
+        .nav-btn {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--text-dark);
+            background: transparent;
+            height: 42px; 
+            padding: 0 18px; 
+            font-size: 14px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-sizing: border-box;
+            user-select: none;
+            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(131, 92, 242, 0.10);
+            color: var(--accent-purple);
+            box-shadow: inset 0 0 0 1px rgba(131, 92, 242, 0.08);
+        }
+
+        .nav-btn:active, .nav-btn.pressed {
+            background: rgba(131, 92, 242, 0.14);
+            transform: scale(0.95);
+        }
+
+        .nav-btn i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        
+        .nav-btn .fa-github { color: inherit; }
+        .nav-btn .fa-python { color: inherit; }
+        .nav-btn .fa-file-lines { color: inherit; }
+        .nav-btn .fa-circle-question { color: inherit; }
+
+        .litert-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: 999px;
+            transition: all 0.2s;
+        }
+        .litert-brand:hover {
+            background: rgba(255,255,255,0.55);
+        }
+        .litert-text {
+            font-weight: 500;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        .litert-logo {
+            height: 20px;
+            width: auto;
+            display: block;
+        }
+
+        #about-menu {
+            display: none;
+            position: absolute;
+            top: 54px;
+            left: 0;
+            width: auto;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 22px;
+            box-shadow: 0 18px 48px rgba(83, 73, 125, 0.14);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.96);
+            z-index: 10000;
+            overflow: hidden;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #about-menu.show {
+            display: block;
+        }
+
+        .menu-content {
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+        
+        .menu-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--accent-purple);
+            font-size: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .nav-btn span { display: none; }
+            .nav-btn i { margin-right: 0; }
+            .litert-text { display: none; }
+            #retro-nav { width: calc(100% - 16px); padding-inline: 10px; }
+            body { padding: 88px 12px 120px; }
+        }
+
+        #monitor-window {
+            width: min(1280px, 100%); 
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            gap: 18px;
+        }
+        
+        .title-bar {
+            display: none; /* Hide the old title bar */
+        }
+        
+        #main-content {
+            display: flex;
+            gap: 18px;
+            align-items: stretch;
+            flex-wrap: nowrap; 
+        }
+        
+        #vis-col { width: 390px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px; }
+        #monitor-col { flex: 1; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+        
+        @media (max-width: 900px) {
+            body { align-items: flex-start; padding-top: 104px; }
+            #monitor-window { width: 100%; }
+            #main-content { flex-direction: column; }
+            #vis-col { width: 100%; }
+        }
+
+        /* Override old windows classes */
+        .win-outset, .win-inset {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            border-radius: var(--radius-lg);
+            backdrop-filter: var(--glass-blur);
+        }
+        
+        .win-inset {
+            background: rgba(255, 255, 255, 0.40);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.50);
+            border: 1px solid rgba(255,255,255,0.72);
+        }
+
+        #psd-frame { height: 196px; position: relative; flex-shrink: 0; padding: 14px; border-radius: var(--radius-lg); overflow: hidden; }
+        #psd-frame::before { content: "PSD Spectrum"; position: absolute; top: 16px; left: 18px; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-light); z-index: 10; opacity: 0.92; }
+        #psdCanvas { margin-top: 28px; height: calc(100% - 28px); width: 100%; border-radius: calc(var(--radius-lg) - 4px); }
+
+        #nn-frame { flex: 1; display: flex; flex-direction: column; gap: 14px; min-height: 250px; background: var(--card-bg); padding: 16px; border-radius: var(--radius-lg); border: 1px solid var(--card-border); box-shadow: var(--card-shadow); }
+        .layer-tabs { display: flex; gap: 10px; flex-shrink: 0; }
+        .layer-btn {
+            flex: 1; background: rgba(255,255,255,0.44);
+            border-radius: 999px;
+            padding: 8px 0; text-align: center; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 700; cursor: pointer; color: var(--text-dark);
+            transition: transform 0.2s, background 0.2s, box-shadow 0.2s, color 0.2s;
+            border: 1px solid transparent;
+        }
+        .layer-btn:hover {
+            background: rgba(255,255,255,0.82);
+            transform: translateY(-1px);
+        }
+        .layer-btn:active, .layer-btn.active {
+            background: linear-gradient(135deg, var(--accent-purple), #6e8df0); color: white;
+            box-shadow: 0 10px 24px rgba(131, 92, 242, 0.28);
+        }
+        
+        #nn-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; background: transparent; padding: 0; border: none; box-shadow: none; }
+        .grid-cell { position: relative; background: linear-gradient(180deg, rgba(255,255,255,0.62), rgba(255,255,255,0.34)); overflow: hidden; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.65); display: flex; align-items: center; justify-content: center; }
+        .full-width { grid-column: 1 / -1; }
+        .cell-label { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.80); color: var(--text-dark); font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 9px; border-radius: 999px; z-index: 10; backdrop-filter: blur(6px); box-shadow: 0 4px 10px rgba(83, 73, 125, 0.08); }
+        
+        #stats-group { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; padding: 14px; background: var(--card-bg); flex-shrink: 0; border-radius: var(--radius-lg); border: 1px solid var(--card-border); }
+        .stat-item { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 14px; background: linear-gradient(180deg, rgba(255,255,255,0.60), rgba(255,255,255,0.34)); border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.58); min-height: 86px; }
+        .stat-label { font-size: 11px; font-weight: 700; color: var(--text-light); margin-bottom: 10px; display: block; letter-spacing: 0.08em; text-transform: uppercase; }
+        .stat-value-box { background: transparent; border: none; padding: 0; height: auto; display: flex; align-items: baseline; }
+        .stat-val { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 700; color: var(--text-dark); line-height: 1; text-shadow: none; letter-spacing: -0.03em; }
+        .stat-val.active { color: var(--accent-purple); }
+        
+        #video-frame {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            position: relative;
+            background: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0.22));
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--card-border);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.45);
+        }
+        canvas.display-layer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            border-radius: calc(var(--radius-lg) - 2px);
+        }
+        #wave-frame { height: 132px; background: var(--card-bg); padding: 12px; border-radius: var(--radius-lg); position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--card-border); overflow: hidden; }
+        
+        #bottom-bar { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); width: min(1280px, calc(100vw - 24px)); height: 112px; z-index: 1000; display: flex; gap: 16px; padding: 0; box-sizing: border-box; background: transparent; border: none; box-shadow: none; }
+        
+        #trend-wrapper { flex: 1; height: 100%; display: flex; gap: 0; background: linear-gradient(180deg, rgba(255,255,255,0.62), rgba(255,255,255,0.40)); border: 1px solid var(--card-border); border-radius: var(--radius-lg); position: relative; overflow: hidden; box-shadow: var(--card-shadow); backdrop-filter: var(--glass-blur); }
+        
+        .trend-y-axis {
+            width: 46px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-sizing: border-box;
+            background: rgba(255,255,255,0.28);
+            border-right: 1px solid rgba(255,255,255,0.54);
+        }
+        
+        .axis-label {
+            position: absolute;
+            right: 10px;
+            font-size: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;                  
+            color: var(--text-light);                       
+            transform: translateY(50%);
+            letter-spacing: 0.06em;
+        }
+
+        #trend-container { 
+            flex: 1; 
+            height: 100%; 
+            background: transparent; 
+            position: relative; 
+        }
+
+        #trend-title { position: absolute; top: 12px; left: 16px; color: var(--accent-purple); font-size: 12px; font-weight: 800; opacity: 0.95; pointer-events: none; letter-spacing: 0.08em; text-transform: uppercase; }
+        
+        #save-container { width: 112px; display: flex; flex-direction: column; }
+        
+        #largeStartBtn { position: absolute; z-index: 50; padding: 13px 34px; background: linear-gradient(135deg, var(--accent-purple), #6e8df0); color: white; font-weight: 700; font-size: 15px; border: none; border-radius: 999px; box-shadow: 0 12px 28px rgba(131, 92, 242, 0.34); cursor: pointer; outline: none; font-family: 'Outfit', sans-serif; transition: transform 0.24s ease, box-shadow 0.24s ease, opacity 0.24s ease; letter-spacing: 0.02em; }
+        #largeStartBtn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(131, 92, 242, 0.42); }
+        #largeStartBtn:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 8px 18px rgba(131, 92, 242, 0.30); }
+        #largeStartBtn:disabled { background: #d1cde0; box-shadow: none; color: #fff; cursor: wait; transform: none; }
+        
+        #saveBtn { width: 100%; height: 100%; font-weight: 700; font-size: 14px; background: linear-gradient(180deg, rgba(255,255,255,0.66), rgba(255,255,255,0.42)); color: var(--accent-purple); border: 1px solid var(--card-border); border-radius: var(--radius-lg); box-shadow: var(--card-shadow); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2; text-align: center; padding: 10px; box-sizing: border-box; font-family: 'Outfit', sans-serif; backdrop-filter: var(--glass-blur); transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; letter-spacing: 0.04em; }
+        #saveBtn:hover { background: rgba(255,255,255,0.92); transform: translateY(-2px); box-shadow: var(--card-shadow-strong); }
+        #saveBtn:active { transform: translateY(1px); }
+        #saveBtn span:last-child { font-size: 11px; color: var(--text-light); margin-top: 5px; font-weight: 600; }
+        
+        canvas { width: 100%; height: 100%; display: block; }
+    </style>
+</head>
+<body>
+
+<nav id="retro-nav">
+    <div class="nav-group-left">
+        <div style="position: relative;">
+            <div id="btn-about" class="nav-btn">
+                <i class="fa-solid fa-circle-question"></i>
+                <span>About</span>
+            </div>
+            <div id="about-menu">
+                <div class="menu-content" style="width: 332px; max-width: 90vw;">
+                    <div class="menu-title" style="margin-bottom: 8px; font-weight: bold;">FacePhys Demo V1.0</div>
+                    
+                    <p style="line-height: 1.6; margin-bottom: 10px; font-size: 13px; color: #333;">
+                        FacePhys leverages State Space Models (SSMs) to model heart dynamics as continuous-time controlled ODEs. This ensures robust handling of irregular sampling and precise capture of physiological signals.
+                    </p>
+                    
+                    <p style="line-height: 1.6; margin-bottom: 10px; font-size: 13px; color: #333;">
+                        Optimized for the edge inference, the model is ultra-lightweight (4MB) with latency as low as 5ms.
+                    </p>
+
+                    <p style="line-height: 1.6; font-size: 13px; color: #333;">
+                        Powered by LiteRT, inference runs in your browser. 
+                        <strong>Privacy is guaranteed with zero data upload.</strong>
+                    </p>
+
+                    <div style="border-top: 1px solid rgba(0,0,0,0.08); margin: 14px 0;"></div>
+                    
+                    <p style="margin-top: 4px; text-align: right; font-style: italic; font-size: 12px; color: #666;">
+                        Author: Kegang Wang
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <a href="https://github.com/KegangWangCCNU/FacePhys-Release" target="_blank" class="nav-btn">
+            <i class="fa-brands fa-github"></i>
+            <span>GitHub</span>
+        </a>
+        
+        <a href="https://github.com/user-attachments/files/24302692/FacePhys2025.pdf" target="_blank" class="nav-btn">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Paper</span>
+        </a>
+        
+        <a href="https://github.com/KegangWangCCNU/open-rppg" target="_blank" class="nav-btn">
+            <i class="fa-brands fa-python"></i>
+            <span>Python SDK</span>
+        </a>
+    </div>
+
+    <a href="https://ai.google.dev/edge" target="_blank" class="litert-brand">
+        <span class="litert-text">Powered by</span>
+        <img src="resource/litert_logo.png" alt="LiteRT" class="litert-logo">
+    </a>
+</nav>
+
+<video id="videoInput" playsinline muted style="display:none"></video>
+
+<div id="monitor-window" class="win-outset">
+    <div class="title-bar">
+        <span>rPPG.EXE</span>
+    </div>
+
+    <div id="main-content">
+        <div id="vis-col">
+            <div id="psd-frame" class="win-inset">
+                <canvas id="psdCanvas"></canvas>
+            </div>
+
+            <div id="nn-frame">
+                <div class="layer-tabs">
+                    <div class="layer-btn active" data-layer="0">SSM1</div>
+                    <div class="layer-btn" data-layer="1">SSM2</div>
+                    <div class="layer-btn" data-layer="2">SSM3</div>
+                    <div class="layer-btn" data-layer="3">SSM4</div>
+                    <div class="layer-btn" data-layer="4">PROJ</div>
+                </div>
+
+                <div id="nn-grid" class="win-inset">
+                    <div class="grid-cell">
+                        <span class="cell-label">ROI</span>
+                        <canvas id="cropDisplayCanvas"></canvas>
+                    </div>
+                    <div class="grid-cell">
+                        <span class="cell-label">ATTN</span>
+                        <canvas id="heatmapCanvas"></canvas>
+                    </div>
+                    <div class="grid-cell full-width">
+                        <span class="cell-label">Heart State</span>
+                        <canvas id="trajCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="monitor-col">
+            <div id="stats-group" class="win-inset">
+                <div class="stat-item">
+                    <span class="stat-label">HR (BPM)</span>
+                    <div class="stat-value-box">
+                        <span id="hrVal" class="stat-val">--</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">SQI</span>
+                    <div class="stat-value-box">
+                        <span id="sqiVal" class="stat-val">0.00</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Latency</span>
+                    <div class="stat-value-box">
+                        <span id="latencyVal" class="stat-val">0.0</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">FPS</span>
+                    <div class="stat-value-box">
+                        <span id="fpsVal" class="stat-val">0</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Frame</span>
+                    <div class="stat-value-box">
+                        <span id="frameVal" class="stat-val">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="video-frame" class="win-inset">
+                <canvas id="previewCanvas" class="display-layer"></canvas>
+                <canvas id="overlayCanvas" class="display-layer"></canvas>
+            </div>
+
+            <div id="wave-frame" class="win-inset">
+                <button id="largeStartBtn" disabled>Loading System...</button>
+                <canvas id="plotCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div id="bottom-bar" class="win-outset">
+        <div id="trend-wrapper">
+            <div class="trend-y-axis">
+                <span class="axis-label" style="bottom: 71.4%">140</span>
+                <span class="axis-label" style="bottom: 42.8%">100</span>
+            <span class="axis-label" style="bottom: 14.2%">60</span>
+        </div>
+        <div id="trend-container" class="win-inset">
+            <span id="trend-title">HR TREND</span>
+            <canvas id="trendCanvas"></canvas>
+        </div>
+    </div>
+    <div id="save-container">
+        <button id="saveBtn">
+            <span>SAVE</span>
+            <span style="font-size:10px; font-weight:normal;">(.ZIP)</span>
+        </button>
+    </div>
+</div>
+
+<script type="module" src="./main.js"></script>
+
+<script>
+    const aboutBtn = document.getElementById('btn-about');
+    const aboutMenu = document.getElementById('about-menu');
+
+    aboutBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = aboutMenu.classList.contains('show');
+        if (isOpen) {
+            aboutMenu.classList.remove('show');
+            aboutBtn.classList.remove('pressed');
+        } else {
+            aboutMenu.classList.add('show');
+            aboutBtn.classList.add('pressed');
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!aboutMenu.contains(e.target) && !aboutBtn.contains(e.target)) {
+            aboutMenu.classList.remove('show');
+            aboutBtn.classList.remove('pressed');
+        }
+    });
+</script>
+</body>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then((registration) => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch((err) => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+        });
+    }
+</script>
+</html>
